@@ -1,0 +1,180 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    background-color: #f3f4f6;
+}
+
+.ContenedorRegistro {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.PanelIzquierdo {
+    flex: 1;
+    background-color: #e0f2fe;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.ContenedorLogo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.MuelaLogo {
+    width: 55px;
+    height: auto;
+}
+
+.TextoLogo {
+    font-family: 'Kanit', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0369a1;
+}
+
+.ImagenLogeo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 1;
+}
+
+.PanelDerecho {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    background-color: #f3f4f6;
+}
+
+.TarjetaFormulario {
+    background-color: white;
+    padding: 45px;
+    border-radius: 28px;
+    width: 100%;
+    max-width: 520px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.06);
+    position: relative;
+    z-index: 2;
+}
+
+.TituloFormulario {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.9rem;
+    text-align: center;
+    color: #1f2937;
+    margin-bottom: 30px;
+}
+
+.CampoFormulario {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.EtiquetaFormulario {
+    font-size: 0.95rem;
+    color: #374151;
+    font-weight: 500;
+}
+
+.EntradaFormulario {
+    font-family: 'Poppins', sans-serif;
+    width: 100%;
+    padding: 11px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #1f2937;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.EntradaFormulario:focus {
+    border-color: #0284c7;
+}
+
+.GrupoBotones {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.BotonAccion {
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.15rem;
+    padding: 12px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.2s, transform 0.1s;
+    text-align: center;
+}
+
+.BotonAccion:hover {
+    transform: scale(1.01);
+}
+
+.BotonRegistrar {
+    background-color: #0284c7;
+    color: white;
+}
+
+.BotonRegistrar:hover {
+    background-color: #0369a1;
+}
+
+.BotonIniciarSesion {
+    background-color: white;
+    color: #0284c7;
+    border: 1px solid #0284c7;
+}
+
+.BotonIniciarSesion:hover {
+    background-color: #f0f9ff;
+}
+.BotonRegresar {
+    position: fixed;
+    top: 25px;
+    right: 20px;
+    font-family: 'Kanit', sans-serif;
+    font-size: 1.1rem;
+    padding: 8px 20px;
+    background-color: white;
+    color: #0284c7;
+    border: 2px solid #0284c7;
+    border-radius: 12px;
+    cursor: pointer;
+    z-index: 100;
+    transition: background-color 0.2s, color 0.2s, transform 0.1s;
+}
+
+.BotonRegresar:hover {
+    background-color: #0284c7;
+    color: white;
+    transform: scale(1.02);
+}

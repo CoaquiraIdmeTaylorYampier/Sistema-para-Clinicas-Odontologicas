@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DentalPlanner - Iniciar Sesión</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bevan&family=Kanit&family=Poppins&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="../css/login.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <button class="BotonRegresar" onclick="window.location.href='../index.html'">&#8592; Volver</button>
+    <div class="ContenedorLogin">
+        
+        <div class="PanelIzquierdo">
+            <div class="ContenedorLogo">
+                <img src="../assets/images/logo_muela.png" alt="Logo" class="MuelaLogo">
+                <span class="TextoLogo">DentalPlanner</span>
+            </div>
+            <img src="../assets/images/imagen_logeo.png" alt="Ilustración" class="ImagenLogeo">
+        </div>
+
+        <div class="PanelDerecho">
+            <div class="TarjetaFormulario">
+                <h2 class="TituloFormulario">Iniciar Sesión</h2>
+                
+                <form class="FormularioLogin">
+                    <div class="CampoFormulario">
+                        <label class="EtiquetaFormulario">Correo Electrónico</label>
+                        <input type="email" placeholder="Ingresa tu email" class="EntradaFormulario">
+                    </div>
+
+                    <div class="CampoFormulario">
+                        <label class="EtiquetaFormulario">Contraseña</label>
+                        <input type="password" placeholder="Ingresa tu contraseña" class="EntradaFormulario">
+                    </div>
+
+                    <div class="GrupoBotones">
+                        <button type="submit" class="BotonAccion BotonIngresar">Iniciar Sesión</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+    <script src="../js/login.js"></script>
+</body>
+</html>
