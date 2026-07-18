@@ -1,0 +1,224 @@
+:root {
+    --primary-blue: #0284c7;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --success-green: #22c55e;
+    --warning-orange: #f59e0b;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+.contenido-principal {
+    margin-left: 70px;
+    transition: margin-left 0.3s ease;
+}
+
+/* --- TOPBAR --- */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    height: 60px;
+    padding: 0 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img { height: 35px; width: auto; }
+.brand-text { font-size: 1.2rem; font-weight: 600; color: var(--primary-blue); }
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.campana-notificacion {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: var(--text-dark);
+}
+
+.user-profile img {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}
+
+/* --- DASHBOARD CONTENEDOR --- */
+.dashboard-container {
+    padding: 30px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+/* --- FILTRO DE FECHA --- */
+.filtro-fecha-seccion {
+    background: #ffffff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.filtro-fecha-seccion label {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+.filtro-fecha-seccion input[type="date"] {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: inherit;
+    color: var(--text-dark);
+    outline: none;
+}
+
+/* --- TARJETAS DE MÉTRICAS --- */
+.metricas-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.card-metrica {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+}
+
+.icon-metrica {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+.icon-metrica.blue { background-color: #e0f2fe; color: var(--primary-blue); }
+.icon-metrica.orange { background-color: #fef3c7; color: var(--warning-orange); }
+.icon-metrica.green { background-color: #dcfce7; color: var(--success-green); }
+
+.info-metrica h4 {
+    margin: 0 0 5px 0;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.info-metrica .numero {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+/* --- AGENDA DEL DÍA --- */
+.agenda-seccion {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.titulo-seccion {
+    color: var(--primary-blue);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.lista-agenda {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.agenda-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: var(--bg-light);
+}
+
+.agenda-hora {
+    width: 100px;
+    display: flex;
+    flex-direction: column;
+    border-right: 2px solid var(--border-color);
+    padding-right: 15px;
+}
+
+.agenda-hora strong { font-size: 1.1rem; color: var(--text-dark); }
+.agenda-hora span { font-size: 0.8rem; color: var(--text-muted); }
+
+.agenda-detalles {
+    flex: 1;
+    padding-left: 20px;
+}
+
+.paciente-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.paciente-info img {
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+}
+
+.nombre-paciente { margin: 0 0 5px 0; color: var(--text-dark); }
+.detalle-extra { margin: 0; font-size: 0.85rem; color: var(--text-muted); }
+
+.agenda-estado {
+    padding-left: 20px;
+}
+
+.badge-estado {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+.badge-estado.verde {
+    background-color: var(--success-green);
+    box-shadow: 0 2px 5px rgba(34, 197, 94, 0.3);
+}

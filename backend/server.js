@@ -45,37 +45,65 @@ app.listen(process.env.PORT_SERVER, () => {
     console.log(`Servidor de DentalPlanner corriendo en el puerto ${process.env.PORT_SERVER}`);
 });
 
-// Endpoint para Iniciar Sesión
+// Endpoint de Login
 app.post('/api/login', async (req, res) => {
     const conexionDb = await pool.getConnection();
-
     try {
-        // Recibimos el correo y la contraseña que manda el frontend
-        const { correo, password } = req.body;
+        const { correo, password } = req.body; // Tu frontend debe enviar esto
 
-        // Consultamos a la base de datos si existe esa combinación exacta
-        // Recuerda que al registrar, guardamos el correo en la columna nombre_usuario
-        const queryLogin = 'SELECT * FROM Usuario WHERE nombre_usuario = ? AND password_hash = ?';
-        
-        // Ejecutamos la consulta. MySQL nos devuelve un arreglo con los resultados
-        const [usuariosEncontrados] = await conexionDb.query(queryLogin, [correo, password]);
+        // Buscamos al usuario y hacemos JOIN para traer su nombre real
+        const query = `
+            SELECT u.id_usuario, u.nombre_usuario, u.rol_id, u.password_hash,
+                   o.nombres AS nombre_odontologo, o.apellidos AS apellido_odontologo,
+                   p.nombres AS nombre_paciente, p.apellidos AS apellido_paciente
+            FROM Usuario u
+            LEFT JOIN Odontologo o ON u.odontologo_id = o.id_Odontologo
+            LEFT JOIN Paciente p ON u.paciente_id = p.id_paciente
+            WHERE u.nombre_usuario = ?
+        `;
+        const [usuarios] = await conexionDb.query(query, [correo]);
 
-        // Si el arreglo tiene al menos 1 elemento, las credenciales son correctas
-        if (usuariosEncontrados.length > 0) {
-            res.status(200).json({ 
-                exito: true, 
-                mensaje: "Inicio de sesión correcto", 
-                rol_id: usuariosEncontrados[0].rol_id // Enviamos el rol por si lo necesitas luego
-            });
-        } else {
-            // Si el arreglo está vacío, los datos no coinciden
-            res.status(401).json({ error: "Correo o contraseña incorrectos" });
+        if (usuarios.length === 0) {
+            return res.status(401).json({ error: "Usuario no encontrado" });
         }
 
+        const usuario = usuarios[0];
+
+        // NOTA: Si usas bcrypt para contraseñas, aquí iría bcrypt.compare()
+        // Por ahora lo hacemos directo según tus pruebas
+        if (password !== usuario.password_hash) {
+            return res.status(401).json({ error: "Contraseña incorrecta" });
+        }
+
+        // Determinamos el nombre real para enviarlo al Frontend
+        let nombreMostrar = "Usuario";
+        let apellidosMostrar = "";
+        
+        if (usuario.rol_id === 2 || usuario.rol_id === 3) {
+            nombreMostrar = usuario.nombre_odontologo || "Asistente";
+            apellidosMostrar = usuario.apellido_odontologo || "";
+        } else if (usuario.rol_id === 4) {
+            nombreMostrar = usuario.nombre_paciente || "Paciente";
+            apellidosMostrar = usuario.apellido_paciente || "";
+        }
+
+        // Enviamos la respuesta exitosa con los datos del usuario
+        res.json({
+            exito: true,
+            usuario: {
+                id: usuario.id_usuario,
+                correo: usuario.nombre_usuario,
+                rol_id: usuario.rol_id,
+                nombre: nombreMostrar,
+                apellidos: apellidosMostrar
+            }
+        });
+
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Error en login:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
     } finally {
-        conexionDb.release(); // Siempre liberamos la conexión
+        conexionDb.release();
     }
 });
 
@@ -162,6 +190,55 @@ app.post('/api/citas', async (req, res) => {
 
     } catch (error) {
         console.error("Error al registrar cita:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});
+// Endpoint para obtener los datos del Dashboard (Inicio)
+app.get('/api/dashboard', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    const { fecha } = req.query;
+
+    if (!fecha) {
+        return res.status(400).json({ error: "La fecha es requerida" });
+    }
+
+    try {
+        // 1. Contar citas del día seleccionado
+        const [citasCount] = await conexionDb.query('SELECT COUNT(id_Cita) as total FROM Cita WHERE fecha = ?', [fecha]);
+
+        // 2. Contar sillones disponibles (Este dato no depende de la fecha, es el estado físico actual)
+        const [sillonesCount] = await conexionDb.query("SELECT COUNT(id_Consultorio_sillon) as total FROM Consultorio_sillon WHERE estado_equipo = 'Disponible'");
+
+        // 3. Obtener la agenda detallada de ese día
+        const queryAgenda = `
+            SELECT 
+                c.hora_inicio, 
+                c.hora_fin, 
+                p.nombres AS paciente_nombres, 
+                p.apellidos AS paciente_apellidos,
+                o.nombres AS doc_nombres,
+                s.numero_equipo
+            FROM Cita c
+            JOIN Paciente p ON c.Paciente_id_Paciente = p.id_paciente
+            JOIN Odontologo o ON c.Odontologo_id_Odontologo = o.id_Odontologo
+            JOIN Consultorio_sillon s ON c.Consultorio_sillon_id_Consultorio_sillon = s.id_Consultorio_sillon
+            WHERE c.fecha = ?
+            ORDER BY c.hora_inicio ASC
+        `;
+        const [agenda] = await conexionDb.query(queryAgenda, [fecha]);
+
+        res.json({
+            metricas: {
+                citasHoy: citasCount[0].total,
+                sillonesDisponibles: sillonesCount[0].total
+            },
+            agenda: agenda
+        });
+
+    } catch (error) {
+        console.error("Error en el dashboard:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     } finally {
         conexionDb.release();

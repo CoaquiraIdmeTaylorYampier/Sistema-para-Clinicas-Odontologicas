@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Principal - DentalPlanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/inicio.css">
+</head>
+<body>
+    <!-- Menú Lateral Dinámico -->
+    <div id="contenedor-menu"></div>
+
+    <main class="contenido-principal">
+        <!-- Barra Superior -->
+        <header class="topbar">
+            <div class="topbar-brand">
+                <img src="../assets/images/logo_muela.png" alt="Logo DentalPlanner" class="logo-img">
+                <span class="brand-text">DentalPlanner</span>
+            </div>
+            
+            <!-- Perfil de Usuario Dinámico -->
+            <div class="topbar-user">
+                <i class="fas fa-bell campana-notificacion"></i>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=User&background=0284c7&color=fff" alt="Avatar" id="userAvatar">
+                    <span id="nombreRolUsuario">Cargando...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-container">
+            <!-- Selector de Fecha General -->
+            <div class="filtro-fecha-seccion">
+                <label for="fechaDashboard"><i class="fas fa-calendar-alt"></i> Fecha de visualización:</label>
+                <input type="date" id="fechaDashboard">
+            </div>
+
+            <!-- Tarjetas de Métricas -->
+            <div class="metricas-grid">
+                <div class="card-metrica">
+                    <div class="icon-metrica blue"><i class="fas fa-tooth"></i></div>
+                    <div class="info-metrica">
+                        <h4>Citas Programadas</h4>
+                        <span id="txtCitasHoy" class="numero">0</span>
+                    </div>
+                </div>
+
+                <div class="card-metrica">
+                    <div class="icon-metrica orange"><i class="fas fa-hourglass-half"></i></div>
+                    <div class="info-metrica">
+                        <h4>En Espera</h4>
+                        <span class="numero">3</span> <!-- Estático por el momento -->
+                    </div>
+                </div>
+
+                <div class="card-metrica">
+                    <div class="icon-metrica green"><i class="fas fa-chair"></i></div>
+                    <div class="info-metrica">
+                        <h4>Sillones Disponibles</h4>
+                        <span id="txtSillonesDisp" class="numero">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Agenda del Día -->
+            <div class="agenda-seccion">
+                <h3 class="titulo-seccion">Agenda del Día - Línea de Tiempo</h3>
+                <div id="listaAgenda" class="lista-agenda">
+                    <!-- Los items se inyectarán con JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/menu.js"></script>
+    <script src="../js/inicio.js"></script>
+</body>
+</html>
