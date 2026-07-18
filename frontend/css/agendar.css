@@ -1,0 +1,248 @@
+/* Variables de colores para mantener consistencia */
+:root {
+    --primary-blue: #0284c7;
+    --text-dark: #334155;
+    --text-muted: #64748b;
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --success-green: #22c55e;
+    --danger-red: #ef4444;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+}
+
+/* Ajuste del contenedor principal para que no se superponga con el menú */
+.contenido-principal {
+    margin-left: 70px; /* Tamaño del sidebar cerrado */
+    transition: margin-left 0.3s ease;
+}
+
+/* =========================================
+   TOPBAR (Barra Superior)
+========================================= */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    height: 60px;
+    padding: 0 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img {
+    height: 35px;
+    width: auto;
+}
+
+.brand-text {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+.topbar-tabs {
+    display: flex;
+    gap: 20px;
+}
+
+.tab {
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 18px 10px;
+    border-bottom: 3px solid transparent;
+}
+
+.tab.activo {
+    color: var(--primary-blue);
+    border-bottom: 3px solid var(--primary-blue);
+}
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 500;
+}
+
+.topbar-user i {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+/* =========================================
+   CONTENEDOR PRINCIPAL Y COLUMNAS
+========================================= */
+.agendar-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+    gap: 25px;
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 25px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+    border: 1px solid var(--border-color);
+    margin-bottom: 25px;
+}
+
+.card h3 {
+    color: var(--primary-blue);
+    font-size: 1.1rem;
+    margin-top: 0;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+/* =========================================
+   FORMULARIOS Y SELECTORES
+========================================= */
+label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--text-dark);
+}
+
+input[type="text"],
+input[type="month"],
+input[type="time"],
+select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+    box-sizing: border-box;
+    transition: border 0.2s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+}
+
+/* =========================================
+   CALENDARIO DINÁMICO
+========================================= */
+.selector-mes {
+    margin-bottom: 20px;
+}
+
+.calendario-contenedor {
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    padding: 15px;
+    background: #ffffff;
+    margin-bottom: 25px;
+}
+
+.dias-semana {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dias-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+}
+
+.dia {
+    aspect-ratio: 1; /* Hace que los días sean cuadrados perfectos */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.dia:not(.vacio):hover {
+    background-color: #f1f5f9;
+}
+
+.dia.seleccionado {
+    background-color: var(--primary-blue);
+    color: #ffffff;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.4);
+}
+
+.dia.vacio {
+    cursor: default;
+    background-color: transparent;
+}
+
+/* =========================================
+   BOTONES DE ACCIÓN
+========================================= */
+.acciones {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+.btn-cancelar {
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+    border: 1px solid var(--border-color);
+}
+
+.btn-cancelar:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-confirmar {
+    background-color: var(--success-green);
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(34, 197, 94, 0.3);
+}
+
+.btn-confirmar:hover {
+    background-color: #16a34a;
+}

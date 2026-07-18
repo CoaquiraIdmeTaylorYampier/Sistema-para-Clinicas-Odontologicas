@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agendar Cita - DentalPlanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/agendar.css">
+</head>
+<body>
+    <!-- Inyección de tu menú lateral -->
+    <div id="contenedor-menu"></div>
+
+    <main class="contenido-principal">
+        <!-- Barra superior según la imagen -->
+        <header class="topbar">
+            <div class="topbar-brand">
+                <img src="../assets/images/logo_muela.png" alt="Logo" class="logo-img">
+                <span class="brand-text">DentalPlanner</span>
+            </div>
+            <div class="topbar-tabs">
+                <span class="tab">Inicio</span>
+                <span class="tab activo">Calendario</span>
+                <span class="tab">Pacientes</span>
+            </div>
+            <div class="topbar-user">
+                <i class="fas fa-bell"></i>
+                <span>Dr. Gómez</span>
+            </div>
+        </header>
+
+        <!-- Contenedor Principal dividido en 2 columnas -->
+        <form id="formAgendarCita" class="agendar-grid">
+            
+            <!-- COLUMNA IZQUIERDA -->
+            <div class="columna-izquierda">
+                <div class="card">
+                    <h3>1. Información del Paciente</h3>
+                    <label>Nombres</label>
+                    <input type="text" id="pacienteNombres" required>
+                    
+                    <label>Apellidos</label>
+                    <input type="text" id="pacienteApellidos" required>
+                    
+                    <label>Teléfono de Contacto</label>
+                    <input type="text" id="pacienteTelefono" maxlength="9" required>
+                </div>
+
+                <div class="card">
+                    <h3>2. Asignar Profesional</h3>
+                    <label>Seleccionar Odontólogo</label>
+                    <select id="odontologoId" required>
+                        <option value="">Seleccione un profesional...</option>
+                        
+                    </select>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA -->
+            <div class="columna-derecha">
+                <div class="card">
+                    <h3>3. Fecha y Hora</h3>
+                    
+                    <!-- Selector de Mes y Año -->
+                    <div class="selector-mes">
+                        <label>Seleccione el Mes:</label>
+                        <input type="month" id="selectorMes" required>
+                    </div>
+
+                    <!-- Calendario Dinámico -->
+                    <div class="calendario-contenedor">
+                        <div class="dias-semana">
+                            <span>LUN</span><span>MAR</span><span>MIÉ</span><span>JUE</span><span>VIE</span><span>SÁB</span><span>DOM</span>
+                        </div>
+                        <div class="dias-grid" id="calendarioGrid">
+                            <!-- JS inyectará los días aquí -->
+                        </div>
+                    </div>
+                    <input type="hidden" id="fechaSeleccionada" required>
+
+                    <!-- Selector Manual de Hora -->
+                    <!-- Selector Manual de Horas -->
+                    <div class="selector-hora" style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div style="flex: 1;">
+                            <label>Hora de Inicio:</label>
+                            <input type="time" id="horaInicio" required>
+                        </div>
+                        <div style="flex: 1;">
+                            <label>Hora de Fin:</label>
+                            <input type="time" id="horaFin" required>
+                        </div>
+                    </div>
+
+                    <div class="selector-sillon">
+                        <label>Consultorio / Sillón</label>
+                        <select id="sillonId" required>
+                            <option value="">Seleccione un sillón...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="acciones">
+                    <button type="button" class="btn-cancelar">Cancelar</button>
+                    <button type="submit" class="btn-confirmar">Confirmar y Agendar Cita</button>
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/agendar.js"></script>
+</body>
+</html>

@@ -78,3 +78,92 @@ app.post('/api/login', async (req, res) => {
         conexionDb.release(); // Siempre liberamos la conexión
     }
 });
+
+// Endpoint para obtener odontólogos registrados
+app.get('/api/odontologos', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    try {
+        const query = 'SELECT id_Odontologo, nombres, apellidos, especialidad FROM Odontologo';
+        const [odontologos] = await conexionDb.query(query);
+        res.json(odontologos);
+    } catch (error) {
+        console.error("Error al obtener odontólogos:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});
+
+
+// Endpoint para obtener sillones disponibles
+app.get('/api/sillones/disponibles', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    try {
+        const query = `
+            SELECT id_Consultorio_sillon, nombre_sala, numero_equipo 
+            FROM Consultorio_sillon 
+            WHERE estado_equipo = 'Disponible'
+        `;
+        const [sillones] = await conexionDb.query(query);
+        res.json(sillones);
+    } catch (error) {
+        console.error("Error al obtener sillones:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});
+// Endpoint para Agendar Cita y validar cruces
+app.post('/api/citas', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+
+    try {
+        // Recibimos los nuevos campos
+        const { pacienteNombres, pacienteApellidos, pacienteTelefono, odontologoId, fecha, horaInicio, horaFin, sillonId } = req.body;
+
+        // 1. VALIDACIÓN ESTRICTA DE PACIENTE (Por Nombre y Apellido)
+        const queryPaciente = 'SELECT id_paciente FROM Paciente WHERE nombres = ? AND apellidos = ?';
+        const [pacienteRows] = await conexionDb.query(queryPaciente, [pacienteNombres, pacienteApellidos]);
+        
+        if (pacienteRows.length === 0) {
+            // Código 404: No encontrado
+            return res.status(404).json({ 
+                error: "No existe un paciente registrado con esos nombres y apellidos exactos. Por favor, regístrelo en el sistema primero." 
+            });
+        }
+        
+        // Si existe, capturamos su ID
+        const paciente_id = pacienteRows[0].id_paciente;
+
+        // 2. VALIDACIÓN DE CRUCE DE HORARIOS
+        const queryValidacion = `
+            SELECT id_Cita FROM Cita 
+            WHERE fecha = ? 
+            AND (hora_inicio < ? AND hora_fin > ?)
+            AND (Odontologo_id_Odontologo = ? OR Consultorio_sillon_id_Consultorio_sillon = ?)
+        `;
+        const [citasExistentes] = await conexionDb.query(queryValidacion, [fecha, horaFin, horaInicio, odontologoId, sillonId]);
+
+        if (citasExistentes.length > 0) {
+            return res.status(409).json({ 
+                error: "Cruce de horarios detectado para este odontólogo o sillón en el bloque de tiempo seleccionado." 
+            });
+        }
+
+        // 3. INSERTAR LA CITA
+        const queryInsert = `
+            INSERT INTO Cita (fecha, hora_inicio, hora_fin, estado_color, Paciente_id_Paciente, Odontologo_id_Odontologo, Consultorio_sillon_id_Consultorio_sillon, Plantilla_recordatoria_id_Plantilla_recordatoria)
+            VALUES (?, ?, ?, 'verde', ?, ?, ?, 1)
+        `;
+        
+        await conexionDb.query(queryInsert, [fecha, horaInicio, horaFin, paciente_id, odontologoId, sillonId]);
+
+        res.status(201).json({ exito: true, mensaje: "Cita registrada con éxito" });
+
+    } catch (error) {
+        console.error("Error al registrar cita:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});
