@@ -1,30 +1,58 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    const filtroFecha = document.getElementById('filtroFechaLogs');
+    const cuerpoTabla = document.getElementById('cuerpoTablaLogs');
+    let logsOriginales = [];
+
     try {
         const respuesta = await fetch('http://localhost:3000/api/logs');
-        const logs = await respuesta.json();
+        logsOriginales = await respuesta.json();
+        aplicarFiltroYOrden();
+    } catch (error) {
+        console.error("Error al cargar los logs:", error);
+    }
 
-        const cuerpoTabla = document.getElementById('cuerpoTablaLogs');
+    if (filtroFecha) {
+        filtroFecha.addEventListener('change', aplicarFiltroYOrden);
+    }
+
+    function aplicarFiltroYOrden() {
+        const fechaSeleccionada = filtroFecha ? filtroFecha.value : '';
+
+        const logsFiltrados = logsOriginales.filter(log => {
+            if (!fechaSeleccionada) return true;
+
+            const fechaLog = new Date(log.fecha_hora);
+            const fechaSolo = fechaLog.toISOString().split('T')[0];
+            return fechaSolo === fechaSeleccionada;
+        });
+
+        const logsOrdenados = logsFiltrados.sort((a, b) => new Date(b.fecha_hora) - new Date(a.fecha_hora));
+        renderizarLogs(logsOrdenados);
+    }
+
+    function renderizarLogs(logs) {
         cuerpoTabla.innerHTML = '';
 
+        if (logs.length === 0) {
+            cuerpoTabla.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 20px;">No hay registros para la fecha seleccionada.</td></tr>';
+            return;
+        }
+
         logs.forEach(log => {
-            // Dar formato a la fecha para que sea legible
             const fecha = new Date(log.fecha_hora).toLocaleString('es-PE', {
                 year: 'numeric', month: '2-digit', day: '2-digit',
                 hour: '2-digit', minute: '2-digit', second: '2-digit'
             });
 
-            // Asignar colores a las etiquetas según la acción
             let badgeClass = 'badge-default';
             if (log.tipo_evento === 'LOGIN') badgeClass = 'badge-login';
             if (log.tipo_evento === 'REGISTRO' || log.tipo_evento === 'CREACION') badgeClass = 'badge-registro';
             if (log.tipo_evento === 'RESERVA') badgeClass = 'badge-reserva';
             if (log.tipo_evento === 'BLOQUEO') badgeClass = 'badge-bloqueo';
 
-            // Limpiar la IP si viene con formato IPv6 de localhost (::1 o ::ffff:)
             let ipLimpia = log.ip_origen || 'Desconocida';
             if (ipLimpia === '::1' || ipLimpia === '::ffff:127.0.0.1') ipLimpia = 'Localhost';
 
-            // Crear la fila HTML
             const fila = `
                 <tr>
                     <td>#${log.id_log}</td>
@@ -38,16 +66,16 @@ document.addEventListener("DOMContentLoaded", async () => {
             cuerpoTabla.innerHTML += fila;
         });
 
-        // Inicializar DataTables para darle los súper poderes
+        if ($.fn.DataTable.isDataTable('#tablaLogs')) {
+            $('#tablaLogs').DataTable().destroy();
+        }
+
         $('#tablaLogs').DataTable({
             language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json' // Traduce la tabla al español
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
             },
-            order: [[0, 'desc']], // Ordenar por ID de mayor a menor (más recientes arriba)
-            pageLength: 10 // Mostrar 10 registros por página
+            order: [[1, 'desc']],
+            pageLength: 10
         });
-
-    } catch (error) {
-        console.error("Error al cargar los logs:", error);
     }
 });

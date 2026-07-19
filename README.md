@@ -1,49 +1,41 @@
-# DentalPlanner 🦷
+# DentalPlanner 
 
-Sistema web dinámico y modular diseñado para la gestión y optimización de agendas, control de citas médicas y administración de bloqueos horarios por consultorios en clínicas odontológicas.
+Sistema web de gestión clínica odontológica diseñado para la optimización de agendas, control de citas y administración de recursos médicos.
 
-## 🚀 Características Principales
-*   **Módulo de Autenticación:** Control de acceso y enrutamiento dinámico basado en privilegios de usuario (Roles).
-*   **Dashboard en Tiempo Real:** Tarjetas con métricas clave (Citas programadas, sillones disponibles) y línea de tiempo diaria.
-*   **Gestión de Bloqueos Horarios:** Interfaz con calendario personalizado para restringir el uso de sillones específicos por mantenimiento u otros motivos.
-*   **Agenda Semanal Avanzada:** Matriz horaria interactiva con doble scroll independiente y algoritmo de aproximación temporal.
+## Características Principales
+* **Autenticación Segura:** Sistema de login con hashing de contraseñas (Bcrypt) y control de acceso por roles.
+* **Trazabilidad (Auditoría):** Registro automático de todas las operaciones críticas (logins, registros, reservas) en base de datos.
+* **Gestión de Agenda:** Algoritmos de validación de cruces horarios para sillones y odontólogos.
+* **Dashboard Dinámico:** Visualización en tiempo real de métricas y disponibilidad.
 
-## 🛠️ Tecnologías Utilizadas
-*   **Backend:** Node.js, Express.js.
-*   **Base de Datos:** MySQL (Driver `mysql2` con soporte de Promesas y Pool de conexiones).
-*   **Frontend:** HTML5, CSS3 (Grid y Flexbox), JavaScript Nativo (Vanilla JS) y SweetAlert2 para alertas.
+## tack Tecnológico
+* **Backend:** Node.js, Express.js.
+* **Base de Datos:** MySQL (Driver: `mysql2/promise`).
+* **Frontend:** HTML5, CSS3 (Grid/Flexbox), Vanilla JavaScript.
+* **Seguridad:** Bcrypt (Hashing), Dotenv (Variables de entorno).
+* **Alertas:** SweetAlert2.
 
-## 📋 Prerrequisitos
-Antes de desplegar el proyecto, asegúrate de tener instalado:
-*   [Node.js](https://nodejs.org/) (Versión 18 o superior recomendada)
-*   Servidor MySQL activo (XAMPP, Laragon o instalación nativa)
+## Prerrequisitos
+- [Node.js](https://nodejs.org/) (v18 o superior).
+- [MySQL Server](https://www.mysql.com/) (Instancia local o remota).
 
-## 🔧 Instrucciones de Instalación y Despliegue
+## Instrucciones de Instalación
 
-### 1. Configuración de la Base de Datos
-1. Abre tu gestor de MySQL (phpMyAdmin, Workbench, etc.).
-2. Crea una base de datos llamada `dentalplanner`.
-3. Importa el script SQL correspondiente con las tablas estructuradas (`Rol`, `Usuario`, `Odontologo`, `Paciente`, `Consultorio_sillon`, `Cita`, `Bloqueo_horario`).
-
-### 2. Configuración del Backend
-Abre una terminal en la raíz del proyecto y dirígete a la carpeta del servidor:
+### 1. Preparación del Entorno
+Clona este repositorio o descarga el proyecto. Abre una terminal en la carpeta raíz del backend y ejecuta:
 ```bash
-Instala las dependencias necesarias definidas en el package.json:
-Bash
-npm install
-Asegúrate de configurar las credenciales de tu base de datos en el archivo .env:
+npm init -y
+npm install express mysql2 bcrypt dotenv cors
 
-Fragmento de código
+## 2 Crea un archivo llamado .env en la raíz del backend y define tus credenciales:
+
+PORT_SERVER=3000
 DB_HOST=localhost
-DB_USER=tu_usuario_mysql
-DB_PASSWORD=tu_contraseña_mysql
+DB_USER=root
+DB_PASSWORD=tu_contraseña
 DB_NAME=dentalplanner
-PORT=3000
+DB_PORT=3306
 
-3. Ejecutar el Servidor
-Para encender la API REST del sistema, ejecuta:
+## 3. ejercucion de backend
 
-Bash
 node server.js
-4. Acceso al Frontend
-Una vez levantado el backend, puedes abrir directamente el archivo frontend/index.html en cualquier navegador web moderno o utilizar la extensión Live Server de VS Code para iniciar la navegación en el sistema.

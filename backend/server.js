@@ -404,7 +404,7 @@ app.get('/api/logs', async (req, res) => {
         const query = `
             SELECT id_log, fecha_hora, tipo_evento, entidad_afectada, descripcion, ip_origen 
             FROM Auditoria_Log 
-            ORDER BY fecha_hora DESC
+            ORDER BY fecha_hora DESC, id_log DESC
         `;
         const [logs] = await conexionDb.query(query);
         res.json(logs);
