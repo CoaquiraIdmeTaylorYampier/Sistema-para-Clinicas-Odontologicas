@@ -1,0 +1,125 @@
+.contenido-principal {
+    margin-left: 70px;
+    background-color: #f1f5f9;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Resto del Topbar igual a las otras pantallas */
+.topbar { display: flex; justify-content: space-between; align-items: center; background: #fff; height: 60px; padding: 0 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.topbar-brand { display: flex; align-items: center; gap: 10px; }
+.logo-img { height: 35px; }
+.brand-text { font-size: 1.2rem; font-weight: 600; color: #0284c7; }
+
+/* Contenedor Principal */
+.horario-wrapper {
+    padding: 20px 30px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.controles-superiores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.titulo-pagina { margin: 0; color: #1e293b; }
+.input-semana { padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; cursor: pointer; }
+
+/* Doble Scroll y Tabla */
+.tabla-scroll-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    overflow: auto; /* Activa el scroll horizontal y vertical */
+    max-height: calc(100vh - 200px); /* Altura fija para evitar bajar la página entera */
+    border: 1px solid #e2e8f0;
+}
+
+.tabla-horario {
+    width: 100%;
+    min-width: 1200px; /* Obliga al scroll horizontal si la pantalla es chica */
+    border-collapse: collapse;
+}
+
+/* Cabeceras Fijas (Sticky) */
+.tabla-horario th {
+    background: #f8fafc;
+    color: #0284c7;
+    padding: 15px;
+    position: sticky;
+    top: 0; /* Fija arriba */
+    z-index: 10;
+    border-bottom: 2px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+}
+
+.esquina-fija {
+    position: sticky;
+    left: 0;
+    top: 0;
+    z-index: 11 !important; /* Esquina superior izquierda siempre visible */
+}
+
+/* Columna de Horas Fija */
+.tabla-horario td.columna-hora {
+    position: sticky;
+    left: 0;
+    background: #f8fafc;
+    font-weight: bold;
+    color: #475569;
+    text-align: center;
+    z-index: 9;
+    border-right: 2px solid #e2e8f0;
+}
+
+.tabla-horario td {
+    border: 1px solid #e2e8f0;
+    padding: 5px;
+    vertical-align: top;
+    height: 120px; /* Altura mínima por cada bloque de hora */
+    width: calc(100% / 7);
+}
+
+.fecha-sub { font-size: 0.8rem; color: #64748b; font-weight: normal; }
+
+/* --- TARJETAS DENTRO DEL CALENDARIO --- */
+.evento-card {
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 5px;
+    font-size: 0.85rem;
+    color: #1e293b;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-left: 4px solid;
+}
+
+.evento-header {
+    font-weight: bold;
+    margin-bottom: 5px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 3px;
+}
+
+.evento-body p { margin: 2px 0; }
+
+/* Tipos de Eventos */
+.cita-verde {
+    background-color: #dcfce7;
+    border-left-color: #22c55e;
+}
+.cita-verde .badge-top { color: #15803d; }
+
+.bloqueo-rojo {
+    background-color: #fee2e2;
+    border-left-color: #ef4444;
+}
+.bloqueo-rojo .badge-top { color: #b91c1c; }

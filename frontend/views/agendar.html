@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/agendar.css">
+    <link rel="stylesheet" href="../css/topbar.css">
 </head>
 <body>
     <!-- Inyección de tu menú lateral -->
@@ -14,21 +15,8 @@
 
     <main class="contenido-principal">
         <!-- Barra superior según la imagen -->
-        <header class="topbar">
-            <div class="topbar-brand">
-                <img src="../assets/images/logo_muela.png" alt="Logo" class="logo-img">
-                <span class="brand-text">DentalPlanner</span>
-            </div>
-            <div class="topbar-tabs">
-                <span class="tab">Inicio</span>
-                <span class="tab activo">Calendario</span>
-                <span class="tab">Pacientes</span>
-            </div>
-            <div class="topbar-user">
-                <i class="fas fa-bell"></i>
-                <span>Dr. Gómez</span>
-            </div>
-        </header>
+         <div id="contenedor-topbar"></div>
+        <div id="contenedor-menu"></div>
 
         <!-- Contenedor Principal dividido en 2 columnas -->
         <form id="formAgendarCita" class="agendar-grid">
@@ -111,5 +99,6 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/menu.js"></script>
     <script src="../js/agendar.js"></script>
+    <script src="../js/topbar.js"></script>
 </body>
 </html>

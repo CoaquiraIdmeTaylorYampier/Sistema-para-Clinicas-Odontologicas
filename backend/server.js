@@ -279,3 +279,48 @@ app.post('/api/bloqueos', async (req, res) => {
         conexionDb.release();
     }
 });
+// Endpoint para obtener la agenda de toda una semana
+app.get('/api/agenda-semanal', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    const { inicio, fin } = req.query;
+
+    if (!inicio || !fin) {
+        return res.status(400).json({ error: "Faltan las fechas de inicio y fin" });
+    }
+
+    try {
+        // 1. Obtener Citas de la semana
+        const queryCitas = `
+            SELECT 
+                c.id_Cita, c.fecha, c.hora_inicio, c.hora_fin,
+                p.nombres AS paciente_nom, p.apellidos AS paciente_ape, p.telefono_celular,
+                o.nombres AS doc_nom, o.apellidos AS doc_ape,
+                s.numero_equipo
+            FROM Cita c
+            JOIN Paciente p ON c.Paciente_id_Paciente = p.id_paciente
+            JOIN Odontologo o ON c.Odontologo_id_Odontologo = o.id_Odontologo
+            JOIN Consultorio_sillon s ON c.Consultorio_sillon_id_Consultorio_sillon = s.id_Consultorio_sillon
+            WHERE c.fecha BETWEEN ? AND ?
+        `;
+        const [citas] = await conexionDb.query(queryCitas, [inicio, fin]);
+
+        // 2. Obtener Bloqueos de la semana
+        const queryBloqueos = `
+            SELECT 
+                b.id_Bloqueo_horario, b.fecha, b.hora_inicio, b.hora_fin, b.motivo_mantenimiento,
+                s.numero_equipo
+            FROM Bloqueo_horario b
+            JOIN Consultorio_sillon s ON b.Consultorio_sillon_id_Consultorio_sillon = s.id_Consultorio_sillon
+            WHERE b.fecha BETWEEN ? AND ?
+        `;
+        const [bloqueos] = await conexionDb.query(queryBloqueos, [inicio, fin]);
+
+        res.json({ citas, bloqueos });
+
+    } catch (error) {
+        console.error("Error cargando agenda semanal:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});

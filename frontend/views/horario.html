@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Horario Semanal - DentalPlanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/horario.css">
+    <link rel="stylesheet" href="../css/topbar.css">
+</head>
+<body>
+    <div id="contenedor-menu"></div>
+
+    <main class="contenido-principal">
+        <div id="contenedor-topbar"></div>
+        <div id="contenedor-menu"></div>
+
+        <div class="horario-wrapper">
+            <div class="controles-superiores">
+                <h2 class="titulo-pagina">Agenda Semanal</h2>
+                <div class="selector-semana">
+                    <label for="inputSemana">Seleccione la semana:</label>
+                    <input type="week" id="inputSemana" class="input-semana">
+                </div>
+            </div>
+
+            <!-- Contenedor con Scroll Independiente -->
+            <div class="tabla-scroll-container">
+                <table class="tabla-horario" id="tablaHorario">
+                    <thead>
+                        <tr>
+                            <th class="esquina-fija">Hora</th>
+                            <th>LUNES <br><span class="fecha-sub" id="f-lun"></span></th>
+                            <th>MARTES <br><span class="fecha-sub" id="f-mar"></span></th>
+                            <th>MIÉRCOLES <br><span class="fecha-sub" id="f-mie"></span></th>
+                            <th>JUEVES <br><span class="fecha-sub" id="f-jue"></span></th>
+                            <th>VIERNES <br><span class="fecha-sub" id="f-vie"></span></th>
+                            <th>SÁBADO <br><span class="fecha-sub" id="f-sab"></span></th>
+                            <th>DOMINGO <br><span class="fecha-sub" id="f-dom"></span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoHorario">
+                        <!-- Las filas de 08:00 a 20:00 se inyectarán con JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/menu.js"></script>
+    <script src="../js/horario.js"></script>
+    <script src="../js/topbar.js"></script>
+</body>
+</html>

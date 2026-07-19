@@ -1,0 +1,46 @@
+/* Estilos extraídos para uso global */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    height: 60px;
+    padding: 0 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.topbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo-img { height: 35px; width: auto; }
+.brand-text { font-size: 1.2rem; font-weight: 600; color: #0284c7; }
+
+.topbar-user {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.campana-notificacion {
+    color: #0284c7;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #1e293b;
+}
+
+.user-profile img {
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+}

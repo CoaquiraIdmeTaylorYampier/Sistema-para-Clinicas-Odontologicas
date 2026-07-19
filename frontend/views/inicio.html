@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="../css/menu.css">
     <link rel="stylesheet" href="../css/inicio.css">
+    <link rel="stylesheet" href="../css/topbar.css">
 </head>
 <body>
     <!-- Menú Lateral Dinámico -->
@@ -14,21 +15,7 @@
 
     <main class="contenido-principal">
         <!-- Barra Superior -->
-        <header class="topbar">
-            <div class="topbar-brand">
-                <img src="../assets/images/logo_muela.png" alt="Logo DentalPlanner" class="logo-img">
-                <span class="brand-text">DentalPlanner</span>
-            </div>
-            
-            <!-- Perfil de Usuario Dinámico -->
-            <div class="topbar-user">
-                <i class="fas fa-bell campana-notificacion"></i>
-                <div class="user-profile">
-                    <img src="https://ui-avatars.com/api/?name=User&background=0284c7&color=fff" alt="Avatar" id="userAvatar">
-                    <span id="nombreRolUsuario">Cargando...</span>
-                </div>
-            </div>
-        </header>
+        <div id="contenedor-topbar"></div>
 
         <div class="dashboard-container">
             <!-- Selector de Fecha General -->
@@ -76,5 +63,6 @@
 
     <script src="../js/menu.js"></script>
     <script src="../js/inicio.js"></script>
+    <script src="../js/topbar.js"></script>
 </body>
 </html>
