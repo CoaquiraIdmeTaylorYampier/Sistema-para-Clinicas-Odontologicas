@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin - Auditoría de Sistema</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Librerías para la Tabla Interactiva (DataTables) -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
+    <link rel="stylesheet" href="../css/logs.css">
+</head>
+<body>
+    
+    <button class="BotonRegresar" onclick="window.location.href='admin-personal.html'">&#8592; Volver</button>
+
+    <div class="ContenedorDashboard">
+        <header class="CabeceraLogs">
+            <h2>🛡️ Registro de Auditoría (Logs)</h2>
+            <p>Monitoreo en tiempo real de las actividades del sistema DentalPlanner.</p>
+        </header>
+
+        <div class="ContenedorTabla">
+            <table id="tablaLogs" class="display" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Fecha y Hora</th>
+                        <th>Tipo de Evento</th>
+                        <th>Módulo/Entidad</th>
+                        <th>Descripción Detallada</th>
+                        <th>IP de Origen</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaLogs">
+                    <!-- Javascript inyectará las filas aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="../js/admin-logs.js"></script>
+</body>
+</html>

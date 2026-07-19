@@ -7,9 +7,15 @@
     <!-- Perfil de Usuario Dinámico -->
     <div class="topbar-user">
         <i class="fas fa-bell campana-notificacion"></i>
+        
         <div class="user-profile">
             <img src="https://ui-avatars.com/api/?name=User&background=0284c7&color=fff" alt="Avatar" id="userAvatar">
             <span id="nombreRolUsuario">Cargando...</span>
         </div>
+
+        <!-- NUEVO: Botón de Cerrar Sesión -->
+        <button id="btnCerrarSesion" class="boton-logout" onclick="cerrarSesion()" title="Cerrar Sesión">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
     </div>
 </header>

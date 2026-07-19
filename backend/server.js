@@ -9,6 +9,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+async function registrarAuditoria(tipo_evento, entidad, descripcion, idUsuario, ip = null) {
+    const conexionDb = await pool.getConnection();
+    try {
+        // BLINDAJE: Si por alguna razón la IP o el ID llegan como 'undefined', los forzamos a 'null'
+        const ipSegura = ip || null;
+        const idSeguro = idUsuario || null;
+
+        const query = 'INSERT INTO Auditoria_Log (tipo_evento, entidad_afectada, descripcion, ip_origen, Usuario_id_Usuario) VALUES (?, ?, ?, ?, ?)';
+        
+        await conexionDb.query(query, [tipo_evento, entidad, descripcion, ipSegura, idSeguro]);
+        
+    } catch (error) {
+        // Si sigue fallando, esto nos dirá exactamente por qué en la terminal
+        console.error("Error crítico al guardar auditoría:", error);
+    } finally {
+        conexionDb.release();
+    }
+}
+
 app.post('/api/registro', async (req, res) => {
     const conexionDb = await pool.getConnection();
 
@@ -43,6 +62,7 @@ app.post('/api/registro', async (req, res) => {
         await conexionDb.query(queryUsuario, [correo, passwordEncriptada, ROL_PACIENTE, idPacienteGenerado]);
         
         await conexionDb.commit(); // Confirmar cambios en disco duro
+        await registrarAuditoria('REGISTRO', 'Paciente', `Nuevo paciente auto-registrado: ${nombres} ${apellidos}`, null, req.ip);
         res.status(201).json({ exito: true, mensaje: "Cuenta creada exitosamente" });
 
     } catch (error) {
@@ -85,7 +105,7 @@ app.post('/api/login', async (req, res) => {
         if (!passwordValida) {
             return res.status(401).json({ error: "El correo o la contraseña son incorrectos." });
         }
-
+        await registrarAuditoria('LOGIN', 'Usuario', `Acceso exitoso del correo: ${usuarioEncontrado.nombre_usuario} (Rol: ${usuarioEncontrado.rol_id})`, usuarioEncontrado.id_usuario, req.ip);
         // 3. Si todo está perfecto, armamos el paquete de datos del usuario
         // OJO: NUNCA devolvemos el password_hash al Frontend por seguridad
         res.status(200).json({
@@ -185,6 +205,7 @@ app.post('/api/citas', async (req, res) => {
         `;
         
         await conexionDb.query(queryInsert, [fecha, horaInicio, horaFin, paciente_id, odontologoId, sillonId]);
+        await registrarAuditoria('RESERVA', 'Cita', `Se agendó cita para el paciente ${pacienteNombres} el ${fecha} a las ${horaInicio}`, null, req.ip);
 
         res.status(201).json({ exito: true, mensaje: "Cita registrada con éxito" });
 
@@ -269,7 +290,7 @@ app.post('/api/bloqueos', async (req, res) => {
             VALUES (?, ?, ?, ?, ?)
         `;
         await conexionDb.query(queryInsert, [fecha, hora_inicio, hora_fin, motivo, sillon_id]);
-
+        await registrarAuditoria('BLOQUEO', 'Horario', `Sillón ${sillon_id} bloqueado el ${fecha} (${hora_inicio}-${hora_fin}). Motivo: ${motivo}`, null, req.ip);
         res.status(201).json({ exito: true, mensaje: "Horario bloqueado con éxito" });
 
     } catch (error) {
@@ -357,6 +378,7 @@ app.post('/api/registro-odontologo', async (req, res) => {
 
         // 5. Confirmar transacción
         await conexionDb.commit(); 
+        await registrarAuditoria('CREACION', 'Odontologo', `Administrador registró al Odontólogo: ${nombres} ${apellidos} (COP: ${colegiatura_cop})`, null, req.ip);
         res.status(201).json({ exito: true, mensaje: "Cuenta de Odontólogo creada exitosamente" });
 
     } catch (error) {
@@ -368,6 +390,27 @@ app.post('/api/registro-odontologo', async (req, res) => {
         }
         res.status(500).json({ error: error.message });
         
+    } finally {
+        conexionDb.release();
+    }
+});
+// ==========================================
+// ENDPOINT: OBTENER LOGS DE AUDITORÍA (Solo Admin)
+// ==========================================
+app.get('/api/logs', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    try {
+        // Traemos todos los logs ordenados por el más reciente primero
+        const query = `
+            SELECT id_log, fecha_hora, tipo_evento, entidad_afectada, descripcion, ip_origen 
+            FROM Auditoria_Log 
+            ORDER BY fecha_hora DESC
+        `;
+        const [logs] = await conexionDb.query(query);
+        res.json(logs);
+    } catch (error) {
+        console.error("Error al obtener logs:", error);
+        res.status(500).json({ error: "Error interno del servidor al cargar la auditoría" });
     } finally {
         conexionDb.release();
     }
