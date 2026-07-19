@@ -30,15 +30,24 @@ document.addEventListener("DOMContentLoaded", () => {
                         timer: 1500,
                         showConfirmButton: false
                     }).then(() => {
-                        if (data.usuario.rol_id === 2 || data.usuario.rol_id === 3) {
-                            // Es Odontólogo (2) o Asistente (3): Va al Panel Principal
+                        // ==========================================
+                        // NUEVA LÓGICA DE ENRUTAMIENTO POR ROLES
+                        // ==========================================
+                        if (data.usuario.rol_id === 1) {
+                            // Es Administrador (1): Va a su panel exclusivo de gestión
+                            window.location.href = "admin-personal.html";
+                            
+                        } else if (data.usuario.rol_id === 2 || data.usuario.rol_id === 3) {
+                            // Es Odontólogo (2) o Asistente (3): Va al Panel Principal Clínico
                             window.location.href = "inicio.html";
+                            
                         } else if (data.usuario.rol_id === 4) {
                             // Es Paciente (4): Acceso bloqueado por el momento
                             Swal.fire('Acceso Restringido', 'El portal web para pacientes estará disponible próximamente.', 'info');
-                            // window.location.href = "portal_paciente.html"; 
+                            
                         } else {
-                            window.location.href = "inicio.html";
+                            // Fallback de seguridad por si hay un rol desconocido
+                            Swal.fire('Error de Acceso', 'Su rol no tiene una vista asignada en el sistema.', 'error');
                         }
                     });
 

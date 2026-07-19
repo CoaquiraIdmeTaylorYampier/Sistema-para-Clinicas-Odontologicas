@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db');
+const bcrypt = require('bcrypt');
 require('dotenv').config();
 
 const app = express();
@@ -14,30 +15,41 @@ app.post('/api/registro', async (req, res) => {
     try {
         await conexionDb.beginTransaction();
 
+        // Extraemos los datos que llegan del Frontend
         const { nombres, apellidos, telefono, edad, correo, passwordHash } = req.body;
         
-        // Generamos un DNI temporal basado en el teléfono porque la BD lo exige
+        // Generamos un DNI temporal basado en el teléfono
         const dniTemporal = telefono.substring(0, 8); 
         
-        // 1. Guardar en Paciente
+        // ==========================================
+        // NUEVA LÓGICA DE SEGURIDAD (HASHING)
+        // ==========================================
+        const saltRounds = 10; // Nivel de complejidad del algoritmo
+        // Transformamos la contraseña plana en un código ilegible:
+        const passwordEncriptada = await bcrypt.hash(passwordHash, saltRounds); 
+        // ==========================================
+
+        // 1. Guardar en la tabla Paciente
         const queryPaciente = 'INSERT INTO Paciente (dni, nombres, apellidos, telefono_celular, edad, correo_electronico) VALUES (?, ?, ?, ?, ?, ?)';
         const [resultadoPaciente] = await conexionDb.query(queryPaciente, [dniTemporal, nombres, apellidos, telefono, edad, correo]);
         
         const idPacienteGenerado = resultadoPaciente.insertId;
         
-        // 2. Guardar en Usuario con Nivel de Acceso (4 = Paciente)
+        // 2. Guardar en la tabla Usuario con Nivel de Acceso (4 = Paciente)
         const ROL_PACIENTE = 4;
-        const queryUsuario = 'INSERT INTO Usuario (nombre_usuario, password_hash, rol_id, paciente_id) VALUES (?, ?, ?, ?)';
-        await conexionDb.query(queryUsuario, [correo, passwordHash, ROL_PACIENTE, idPacienteGenerado]);
         
-        await conexionDb.commit(); // Confirmar cambios
+        // OJO: Aquí enviamos la variable 'passwordEncriptada' hacia MySQL
+        const queryUsuario = 'INSERT INTO Usuario (nombre_usuario, password_hash, rol_id, paciente_id, odontologo_id) VALUES (?, ?, ?, ?, NULL)';
+        await conexionDb.query(queryUsuario, [correo, passwordEncriptada, ROL_PACIENTE, idPacienteGenerado]);
+        
+        await conexionDb.commit(); // Confirmar cambios en disco duro
         res.status(201).json({ exito: true, mensaje: "Cuenta creada exitosamente" });
 
     } catch (error) {
         await conexionDb.rollback(); // Deshacer todo si hay error
         res.status(500).json({ error: error.message });
     } finally {
-        conexionDb.release();
+        conexionDb.release(); // Devolver la conexión al pool
     }
 });
 
@@ -45,63 +57,51 @@ app.listen(process.env.PORT_SERVER, () => {
     console.log(`Servidor de DentalPlanner corriendo en el puerto ${process.env.PORT_SERVER}`);
 });
 
-// Endpoint de Login
+// ==========================================
+// ENDPOINT: INICIO DE SESIÓN (LOGIN)
+// ==========================================
 app.post('/api/login', async (req, res) => {
     const conexionDb = await pool.getConnection();
+
     try {
-        const { correo, password } = req.body; // Tu frontend debe enviar esto
+        const { correo, password } = req.body;
 
-        // Buscamos al usuario y hacemos JOIN para traer su nombre real
-        const query = `
-            SELECT u.id_usuario, u.nombre_usuario, u.rol_id, u.password_hash,
-                   o.nombres AS nombre_odontologo, o.apellidos AS apellido_odontologo,
-                   p.nombres AS nombre_paciente, p.apellidos AS apellido_paciente
-            FROM Usuario u
-            LEFT JOIN Odontologo o ON u.odontologo_id = o.id_Odontologo
-            LEFT JOIN Paciente p ON u.paciente_id = p.id_paciente
-            WHERE u.nombre_usuario = ?
-        `;
-        const [usuarios] = await conexionDb.query(query, [correo]);
+        // 1. Buscar al usuario en la base de datos SOLO por su correo
+        const queryBusqueda = 'SELECT * FROM Usuario WHERE nombre_usuario = ?';
+        const [usuarios] = await conexionDb.query(queryBusqueda, [correo]);
 
+        // Si el arreglo viene vacío, significa que el correo no existe
         if (usuarios.length === 0) {
-            return res.status(401).json({ error: "Usuario no encontrado" });
+            return res.status(401).json({ error: "El correo o la contraseña son incorrectos." });
         }
 
-        const usuario = usuarios[0];
-
-        // NOTA: Si usas bcrypt para contraseñas, aquí iría bcrypt.compare()
-        // Por ahora lo hacemos directo según tus pruebas
-        if (password !== usuario.password_hash) {
-            return res.status(401).json({ error: "Contraseña incorrecta" });
+        const usuarioEncontrado = usuarios[0];
+     
+        // 2. LA MAGIA MATEMÁTICA: Comparamos el texto plano con el Hash
+        // bcrypt.compare toma "admin123" y lo compara con el "$2b$10$..." de forma segura
+        const passwordValida = await bcrypt.compare(password, usuarioEncontrado.password_hash);
+     
+        // Si la matemática falla, la contraseña es mala
+        if (!passwordValida) {
+            return res.status(401).json({ error: "El correo o la contraseña son incorrectos." });
         }
 
-        // Determinamos el nombre real para enviarlo al Frontend
-        let nombreMostrar = "Usuario";
-        let apellidosMostrar = "";
-        
-        if (usuario.rol_id === 2 || usuario.rol_id === 3) {
-            nombreMostrar = usuario.nombre_odontologo || "Asistente";
-            apellidosMostrar = usuario.apellido_odontologo || "";
-        } else if (usuario.rol_id === 4) {
-            nombreMostrar = usuario.nombre_paciente || "Paciente";
-            apellidosMostrar = usuario.apellido_paciente || "";
-        }
-
-        // Enviamos la respuesta exitosa con los datos del usuario
-        res.json({
+        // 3. Si todo está perfecto, armamos el paquete de datos del usuario
+        // OJO: NUNCA devolvemos el password_hash al Frontend por seguridad
+        res.status(200).json({
             exito: true,
             usuario: {
-                id: usuario.id_usuario,
-                correo: usuario.nombre_usuario,
-                rol_id: usuario.rol_id,
-                nombre: nombreMostrar,
-                apellidos: apellidosMostrar
+                id: usuarioEncontrado.id_usuario,
+                nombre: usuarioEncontrado.nombre_usuario, // Aquí mandamos el correo para que SweetAlert diga "Hola, admin@..."
+                rol_id: usuarioEncontrado.rol_id,
+                odontologo_id: usuarioEncontrado.odontologo_id,
+                paciente_id: usuarioEncontrado.paciente_id
             }
         });
 
     } catch (error) {
         console.error("Error en login:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
+        res.status(500).json({ error: "Error interno del servidor al procesar el inicio de sesión." });
     } finally {
         conexionDb.release();
     }
@@ -320,6 +320,54 @@ app.get('/api/agenda-semanal', async (req, res) => {
     } catch (error) {
         console.error("Error cargando agenda semanal:", error);
         res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});
+// ==========================================
+// ENDPOINT: REGISTRO DE ODONTÓLOGOS (Solo Admin)
+// ==========================================
+app.post('/api/registro-odontologo', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+
+    try {
+        // Iniciamos la transacción segura
+        await conexionDb.beginTransaction();
+
+        // 1. Extraemos los datos que enviará el formulario del Admin
+        const { nombres, apellidos, colegiatura_cop, especialidad, correo, passwordPlana } = req.body;
+
+        // 2. Encriptamos la contraseña temporal que el Admin le asigne al doctor
+        const saltRounds = 10;
+        const passwordEncriptada = await bcrypt.hash(passwordPlana, saltRounds);
+
+        // 3. Guardar primero en la tabla Odontologo
+        const queryOdontologo = 'INSERT INTO Odontologo (nombres, apellidos, colegiatura_cop, especialidad) VALUES (?, ?, ?, ?)';
+        const [resultadoOdontologo] = await conexionDb.query(queryOdontologo, [nombres, apellidos, colegiatura_cop, especialidad]);
+        
+        // Capturamos el ID autogenerado del doctor
+        const idOdontologoGenerado = resultadoOdontologo.insertId;
+
+        // 4. Guardar en la tabla Usuario con Nivel de Acceso (2 = Odontólogo)
+        const ROL_ODONTOLOGO = 2;
+        
+        // Insertamos enviando NULL al paciente_id porque es personal médico
+        const queryUsuario = 'INSERT INTO Usuario (nombre_usuario, password_hash, rol_id, odontologo_id, paciente_id) VALUES (?, ?, ?, ?, NULL)';
+        await conexionDb.query(queryUsuario, [correo, passwordEncriptada, ROL_ODONTOLOGO, idOdontologoGenerado]);
+
+        // 5. Confirmar transacción
+        await conexionDb.commit(); 
+        res.status(201).json({ exito: true, mensaje: "Cuenta de Odontólogo creada exitosamente" });
+
+    } catch (error) {
+        await conexionDb.rollback(); // Deshacer en caso de error
+        
+        // Si el Admin intenta registrar un correo o un COP que ya existe (Violación de UNIQUE)
+        if (error.code === 'ER_DUP_ENTRY') {
+            return res.status(400).json({ error: "El correo electrónico o la colegiatura (COP) ya están registrados en la clínica." });
+        }
+        res.status(500).json({ error: error.message });
+        
     } finally {
         conexionDb.release();
     }
