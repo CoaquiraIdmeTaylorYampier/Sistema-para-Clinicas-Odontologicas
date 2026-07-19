@@ -244,3 +244,38 @@ app.get('/api/dashboard', async (req, res) => {
         conexionDb.release();
     }
 });
+// Endpoint para registrar un bloqueo de horario
+app.post('/api/bloqueos', async (req, res) => {
+    const conexionDb = await pool.getConnection();
+    try {
+        const { fecha, hora_inicio, hora_fin, motivo, sillon_id } = req.body;
+
+        // 1. Validar que no haya citas ya programadas en ese sillón a esa hora
+        const queryCruceCita = `
+            SELECT id_Cita FROM Cita 
+            WHERE fecha = ? 
+            AND Consultorio_sillon_id_Consultorio_sillon = ?
+            AND (hora_inicio < ? AND hora_fin > ?)
+        `;
+        const [citasSillon] = await conexionDb.query(queryCruceCita, [fecha, sillon_id, hora_fin, hora_inicio]);
+
+        if (citasSillon.length > 0) {
+            return res.status(400).json({ error: "No se puede bloquear: Ya hay una cita agendada en ese sillón durante ese horario." });
+        }
+
+        // 2. Insertar el bloqueo si todo está libre
+        const queryInsert = `
+            INSERT INTO Bloqueo_horario (fecha, hora_inicio, hora_fin, motivo_mantenimiento, Consultorio_sillon_id_Consultorio_sillon)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        await conexionDb.query(queryInsert, [fecha, hora_inicio, hora_fin, motivo, sillon_id]);
+
+        res.status(201).json({ exito: true, mensaje: "Horario bloqueado con éxito" });
+
+    } catch (error) {
+        console.error("Error al registrar bloqueo:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    } finally {
+        conexionDb.release();
+    }
+});

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloqueo de Horarios - DentalPlanner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../css/menu.css">
+    <link rel="stylesheet" href="../css/bloqueo.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div id="contenedor-menu"></div>
+
+    <main class="contenido-principal">
+        <header class="topbar">
+            <div class="topbar-brand">
+                <img src="../assets/images/logo_muela.png" alt="Logo DentalPlanner" class="logo-img">
+                <span class="brand-text">DentalPlanner</span>
+            </div>
+            <div class="topbar-user">
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Admin&background=0284c7&color=fff" alt="Avatar" id="userAvatar">
+                    <span id="nombreRolUsuario">Administración</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="bloqueo-container">
+            <h2 class="titulo-pagina"><i class="fas fa-calendar-times"></i> Gestión de Bloqueo de Horarios</h2>
+            
+            <form id="formBloqueo" class="grid-dos-columnas">
+                
+                <!-- Columna Izquierda: Fecha -->
+                <!-- Columna Izquierda: Fecha -->
+                <div class="panel-fecha">
+                    <h3 class="panel-titulo">1. Fecha a Bloquear</h3>
+                    
+                    <div class="calendario-custom">
+                        <!-- Selector de Mes y Año superior -->
+                        <div class="selector-mes">
+                            <input type="month" id="inputMesAnio" class="input-mes">
+                        </div>
+
+                        <!-- Días de la semana (Cabecera) -->
+                        <div class="calendario-header">
+                            <span>LUN</span>
+                            <span>MAR</span>
+                            <span>MIÉ</span>
+                            <span>JUE</span>
+                            <span>VIE</span>
+                            <span>SÁB</span>
+                            <span>DOM</span>
+                        </div>
+
+                        <!-- Cuadrícula donde JS inyectará los números -->
+                        <div id="calendarioDias" class="calendario-dias">
+                            <!-- Se inyectará con JS -->
+                        </div>
+
+                        <!-- Input oculto para enviar al servidor -->
+                        <input type="hidden" id="inputFechaReal">
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Detalles del Bloqueo -->
+                <div class="panel-detalles">
+                    <h3 class="panel-titulo">2. Detalles y Equipo</h3>
+                    
+                    <div class="grupo-horas">
+                        <div class="campo">
+                            <label>Hora de Inicio:</label>
+                            <input type="time" id="inputHoraInicio" class="input-estandar" required>
+                        </div>
+                        <div class="campo">
+                            <label>Hora de Fin:</label>
+                            <input type="time" id="inputHoraFin" class="input-estandar" required>
+                        </div>
+                    </div>
+
+                    <div class="campo">
+                        <label>Consultorio / Sillón:</label>
+                        <select id="selectSillon" class="input-estandar" required>
+                            <option value="">Cargando sillones...</option>
+                        </select>
+                    </div>
+
+                    <div class="campo">
+                        <label>Motivo del Bloqueo:</label>
+                        <input type="text" id="inputMotivo" class="input-estandar" placeholder="Ej. Mantenimiento preventivo, Falla de compresora" required>
+                    </div>
+
+                    <button type="submit" class="btn-bloquear">
+                        <i class="fas fa-lock"></i> Bloquear Horario
+                    </button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <script src="../js/menu.js"></script>
+    <script src="../js/bloqueo.js"></script>
+</body>
+</html>
